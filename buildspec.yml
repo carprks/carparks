@@ -2,6 +2,8 @@ version: 0.1
 phases:
   install:
     commands:
+      - env GO111MODULE=on
+      #- go get github.com/golang/lint
       - go get .
   pre_build:
     commands:
