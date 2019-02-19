@@ -1,13 +1,11 @@
-version: 0.1
+version: 0.2
 phases:
   install:
     commands:
-      - PATH=$PATH:$(go env GOPATH)/bin
       - go get -u github.com/golang/lint
       - go get .
   pre_build:
     commands:
-      - echo $PATH
       # Ensure code passes all lint tests
       - golint -set_exit_status
 
