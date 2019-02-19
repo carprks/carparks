@@ -2,6 +2,7 @@ version: 0.1
 phases:
   install:
     commands:
+      - PATH=$PATH:$(go env GOPATH)/bin
       - go get -u github.com/golang/lint
       - go get .
   pre_build:
