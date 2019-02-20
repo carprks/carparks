@@ -10,7 +10,10 @@ import (
 )
 
 func _main(args []string) int {
-	log.Printf("PORT: %s", os.Getenv("PORT"))
+	port := "80"
+	if len(os.Getenv("PORT")) > 2 {
+		port = os.Getenv("PORT")
+	}
 
 	// router
 	router := mux.NewRouter().StrictSlash(true)
@@ -19,7 +22,7 @@ func _main(args []string) int {
 	router.HandleFunc("/probe", probe.Probe)
 	router.HandleFunc("/", probe.Probe)
 
-	if err := http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), router); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), router); err != nil {
 		log.Println("HTTP", err)
 		return 1
 	}
