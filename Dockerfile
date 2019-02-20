@@ -1,21 +1,27 @@
 # Build box
-FROM golang:1.11.1 AS build
+FROM golang:1.11.5 AS builder
 
 RUN mkdir -p /home/main
 WORKDIR /home/main
+
+# Get Lint
+ENV GO111MODULE=auto
+RUN go get -u golang.org/x/lint/golint
+
+# Get Dependencies
 ENV GO111MODULE=on
-ADD . /home/main
-RUN go get -d ./...
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
 
 # Lint and Test
-RUN go get -u golang.org/x/lint/golint
+COPY . .
 RUN golint -set_exit_status
 RUN go test
 
 # Build
 ARG build
 ARG version
-ARG serviceName
 RUN CGO_ENABLED=0 go build -ldflags="-s -w -X main.Version=${version} -X main.Build=${build}" -o carparks
 RUN cp carparks /
 
@@ -29,7 +35,7 @@ RUN apk add curl
 RUN rm -rf /var/cache/apk/*
 
 # Move
-COPY --from=build /carparks /home/
+COPY --from=builder /carparks /home/
 
 # Set TimeZone
 ENV TZ=Europe/London

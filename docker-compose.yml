@@ -1,0 +1,9 @@
+version: '3'
+services:
+  carparks:
+    build:
+      context: ./
+    env_file:
+      - .env
+    ports:
+      - 8080:80
