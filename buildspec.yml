@@ -1,25 +1,8 @@
 version: 0.2
 phases:
-  install:
-    commands:
-      - go get -u golang.org/x/lint/golint
-      - go get .
-  pre_build:
-    commands:
-      # Ensure code passes all lint tests
-      - golint -set_exit_status
-
-      # Run all tests included with our application
-      - go test
   build:
     commands:
-      # Build our application
-      - go build -o carparks
-artifacts:
-  files:
-    - carparks
-    #- appspec.yml
-    - buildspec.yml
-    #- config/*
-    #- codedeploy/*
-    #- cloudformation/*
+      - docker build -t $AWS_ECR/carparks:$CODEBUILD_SOURCE_VERSION --build-arg build=$CODEBUILD_SOURCE_VERSION --build-arg version=$CODEBUILD_SOURCE_VERSION --build-arg serviceName=carparks -f Dockerfile .
+  post_build:
+    commands:
+      - docker push $AWS_ECR/carparks:$CODEBUILD_SOURCE_VERSION
