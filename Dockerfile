@@ -16,7 +16,7 @@ RUN go mod download
 
 # Lint and Test
 COPY . .
-RUN golint -set_exit_status
+RUN golint ./... -set_exit_status
 RUN go test
 
 # Build

@@ -8,8 +8,10 @@ import (
 	"net/http"
 )
 
+// Handle standard
 type Handle func(w http.ResponseWriter, req *http.Request) error
 
+// Probe responds with a healthy model
 func Probe(w http.ResponseWriter, r *http.Request) {
 	buf, _ := ioutil.ReadAll(r.Body)
 	if len(buf) >= 1 {
@@ -27,6 +29,7 @@ func Probe(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// ServeHTTP
 func (h Handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if r := recover(); r != nil {
