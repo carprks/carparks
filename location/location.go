@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// GetLocation gets the longitude, latiude and address
 func (l Location) GetLocation() (r Location, err error) {
 	client := &http.Client{}
 	reqAdd := fmt.Sprintf("https://maps.googleapis.com/maps/api/geocode/json?key=%s&address=%s", os.Getenv("GOOGLE_API_KEY"), strings.Replace(l.PostCode, " ", "%20", -1))

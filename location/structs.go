@@ -1,5 +1,6 @@
 package location
 
+// Location the model for input
 type Location struct {
 	Longitude float32
 	Latitude  float32
@@ -7,6 +8,7 @@ type Location struct {
 	Street    string
 }
 
+// GoogleResponse the response from google geocoder
 type GoogleResponse struct {
 	Results []struct {
 		AddressComponents []struct {
@@ -42,7 +44,7 @@ type GoogleResponse struct {
 			} `json:"viewport"`
 		} `json:"geometry"`
 		FormattedAddress string   `json:"formatted_address"`
-		PlaceId          string   `json:"place_id"`
+		PlaceID          string   `json:"place_id"`
 		Types            []string `json:"types"`
 	}
 	Status string `json:"status"`

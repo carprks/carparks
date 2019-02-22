@@ -17,6 +17,7 @@ func TestCreateModel_CreateCarPark(t *testing.T) {
 			request: service.CreateModel{
 				Spaces: 5,
 				Name:   "Tester",
+				PostCode: "bb12 6np",
 			},
 			expect: "success",
 			err:    nil,
@@ -24,6 +25,7 @@ func TestCreateModel_CreateCarPark(t *testing.T) {
 		{
 			request: service.CreateModel{
 				Name: "Tester",
+				PostCode: "bb12 6np",
 			},
 			expect:    "failure",
 			errString: "no spaces",
@@ -31,6 +33,7 @@ func TestCreateModel_CreateCarPark(t *testing.T) {
 		{
 			request: service.CreateModel{
 				Spaces: 1,
+				PostCode: "bb12 6np",
 			},
 			expect:    "failure",
 			errString: "name missing",

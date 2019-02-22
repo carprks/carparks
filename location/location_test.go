@@ -8,8 +8,8 @@ import (
 )
 
 func TestLocation_GetLocation(t *testing.T) {
-	testPostCode1 := "BB12 6NP"
-	testPostCode2 := "BB12 ZPP"
+	testPostCode1 := "BB11 1PX"
+	testPostCode2 := "BB11 ZPX"
 
 	tests := []struct {
 		request location.Location
@@ -22,9 +22,9 @@ func TestLocation_GetLocation(t *testing.T) {
 			},
 			expect: location.Location{
 				PostCode:  testPostCode1,
-				Longitude: -2.2948112,
-				Latitude:  53.794537,
-				Street:    "Moore St",
+				Longitude: -2.2458968,
+				Latitude:  53.79071,
+				Street:    "Brick St",
 			},
 			err: nil,
 		},

@@ -41,6 +41,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// CreateCarPark creates the carpark for a company
 func (c CreateModel) CreateCarPark() (string, error) {
 	if c.Spaces == 0 {
 		return "failure", errors.New("no spaces")
