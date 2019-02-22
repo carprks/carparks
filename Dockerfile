@@ -14,6 +14,10 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
+# Env
+ARG GOOGLE_API_KEY
+ARG AWS_ECR
+
 # Lint and Test
 COPY . .
 RUN golint -set_exit_status ./...

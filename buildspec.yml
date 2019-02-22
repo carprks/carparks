@@ -7,7 +7,13 @@ phases:
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
   build:
     commands:
-      - docker build -t $AWS_ECR/carparks:latest --build-arg build=$COMMIT_HASH --build-arg version=$IMAGE_TAG --build-arg serviceName=carparks -f Dockerfile .
+      - docker build -t $AWS_ECR/carparks:latest
+        --build-arg build=$COMMIT_HASH
+        --build-arg version=$IMAGE_TAG
+        --build-arg serviceName=carparks
+        --build-arg GOOGLE_API_KEY=$GOOGLE_API_KEY
+        --build-arg AWS_ECR=$AWS_ECR
+        -f Dockerfile .
       - docker tag $AWS_ECR/carparks:latest $AWS_ECR/carparks:$IMAGE_TAG
   post_build:
     commands:
