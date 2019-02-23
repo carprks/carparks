@@ -19,3 +19,7 @@ phases:
     commands:
       - docker push $AWS_ECR/carparks:$IMAGE_TAG
       - docker push $AWS_ECR/carparks:latest
+      - printf '[{"name":"carparks","imageUri":"%s"}]' $AWS_ECR/carparks:$IMAGE_TAG > imagedefinitions.json
+artifacts:
+  files:
+    - imagedefinitions.json
