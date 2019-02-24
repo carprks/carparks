@@ -45,7 +45,7 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 				h.Status = "pass"
 			}
 		} else {
-			durl := fmt.Sprintf("https://%s/healthcheck", dep)
+			durl := fmt.Sprintf("https://%s/healthcheck", dep.URL)
 			d, err := http.Get(durl)
 			if err != nil {
 				h = Health{
