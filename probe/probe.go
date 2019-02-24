@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 // Handle standard
@@ -25,6 +26,8 @@ func Probe(w http.ResponseWriter, r *http.Request) {
 		Status: "pass",
 	})
 	w.Write(j)
+
+	fmt.Println(fmt.Printf("Probe: %s, Agent: %s", time.Now().Local().String(), r.UserAgent()))
 
 	return
 }
