@@ -30,11 +30,14 @@ func _main(args []string) int {
 		port = os.Getenv("PORT")
 	}
 
-	// router
+	// Router
 	router := mux.NewRouter().StrictSlash(true)
 
-	// Create
+	// Service
 	router.HandleFunc("/", service.Create).Methods("POST")
+	router.HandleFunc("/", service.RetrieveList).Methods("GET")
+	router.HandleFunc("/{carparkId}", service.Retrieve).Methods("GET")
+	router.HandleFunc("/{carparkId}", service.Patch).Methods("PATCH")
 
 	// Probe
 	router.HandleFunc("/probe", probe.Probe)

@@ -22,3 +22,7 @@ type Response struct {
 	Error    string `json:"error"`
 }
 
+// CarParkOwner model
+type CarParkOwner struct {
+	ID string `json:"id"`
+}
