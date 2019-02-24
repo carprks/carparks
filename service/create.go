@@ -31,7 +31,9 @@ func Create(w http.ResponseWriter, r *http.Request) {
 				Response: "",
 				Error:    err.Error(),
 			})
+			return
 		}
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
