@@ -3,13 +3,16 @@ package service
 // CreateModel standard to check the create against
 type CreateModel struct {
 	// Inputs
-	Name      string `json:"name"`
-	Spaces    int    `json:"spaces"`
-	PostCode  string `json:"postcode"`
+	Id        int    `json:"id,omitempty"`
+	Name      string `json:"name,omitemprt"`
+	Spaces    int    `json:"spaces,omitempty"`
+	PostCode  string `json:"postcode,omitempty"`
+	Location  Location `json:"location,omitempty"`
+}
 
-	// Model
-	Longitude string
-	Latitude  string
+type Location struct {
+	Longitude float32 `json:"longitude,omitempty"`
+	Latitude  float32 `json:"latitude,omitempty"`
 }
 
 // Response did it work or not

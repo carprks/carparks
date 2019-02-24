@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"log"
+	"main/healthcheck"
 	"main/probe"
 	"main/service"
 	"net/http"
@@ -12,15 +12,15 @@ import (
 )
 
 func _main(args []string) int {
-	if len(os.Getenv("GOOGLE_API_KEY")) == 0 {
+	if os.Getenv("GOOGLE_API_KEY") == "" {
 		err := godotenv.Load()
 		if err != nil {
-			log.Printf("Env Load: %v", err)
+			fmt.Println(fmt.Sprintf("Env Load: %v", err))
 			return 0
 		}
 
 		if len(os.Getenv("GOOGLE_API_KEY")) == 0 {
-			log.Printf("Cant load google api key")
+			fmt.Println("Cant load google api key")
 			return 0
 		}
 	}
@@ -34,18 +34,21 @@ func _main(args []string) int {
 	router := mux.NewRouter().StrictSlash(true)
 
 	// Create
-	router.HandleFunc("/create", service.Create).Methods("POST")
+	router.HandleFunc("/", service.Create).Methods("POST")
 
 	// Probe
 	router.HandleFunc("/probe", probe.Probe)
-	router.HandleFunc("/", probe.Probe)
 
+	// Health Check
+	router.HandleFunc("/healthcheck", healthcheck.HealthCheck)
+
+	fmt.Println(fmt.Sprintf("Listening on: %s", port))
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), router); err != nil {
-		log.Println("HTTP", err)
+		fmt.Println(fmt.Sprintf("HTTP: %v", err))
 		return 1
 	}
 
-	log.Println("Died but nicely")
+	fmt.Println("Died but nicely")
 	return 0
 }
 

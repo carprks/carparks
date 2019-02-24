@@ -1,0 +1,182 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: CarParks Service
+  license:
+    name: MIT
+servers:
+  - url: https://carparks.carprk.com/v1
+  - url: http://docker.devel
+
+paths:
+  /:
+    get:
+      summary: List all carparks
+      operationId: listCarparks
+      tags:
+        - carparks
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: A paged array of carparks
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+                schema:
+                  $ref: "#/components/schemas/CarParks"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a Carpark
+      operationId: createCarpark
+      tags:
+        - carparks
+      responses:
+        '201':
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /{carparkId}:
+    get:
+      summary: Info for a specific pet
+      operationId: showPetById
+      tags:
+        - carparks
+      parameters:
+        - name: carparkId
+          in: path
+          required: true
+          description: The id of the carpark to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarPark"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /probe:
+    get:
+      summary: Probe the service
+      operationId: probe
+      tags:
+        - healthchceck
+      responses:
+        '200':
+          description: test the service is alive
+          content:
+            application/health+json:
+              schema:
+                $ref: "#/components/schemas/Probe"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /healthcheck:
+    get:
+      summary: Probe the service and its dependencies
+      operationId: healthCheck
+      tags:
+        - healthcheck
+      responses:
+        '200':
+          description: test the service and its dependencies
+          content:
+            application/health+json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+components:
+  schemas:
+    Probe:
+      properties:
+        status:
+          type: string
+    Health:
+      properties:
+        status:
+          type: string
+        name:
+          type: string
+        dependencies:
+          type: array
+          items:
+            $ref: "#/components/schemas/Health"
+    CarPark:
+      required:
+        - name
+        - postcode
+        - spaces
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        postcode:
+          type: string
+        spaces:
+          type: integer
+          format: int32
+        location:
+          $ref: "#/components/schemas/Location"
+        tag:
+          type: string
+    CarParks:
+      type: array
+      items:
+        $ref: "#/components/schemas/CarPark"
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    Location:
+      required:
+        - Longitude
+        - Latitude
+      properties:
+        Longitude:
+          type: number
+          format: float
+        Latitude:
+          type: number
+          format: float

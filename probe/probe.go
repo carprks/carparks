@@ -26,8 +26,6 @@ func Probe(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 	w.WriteHeader(http.StatusOK)
 
-	// fmt.Println(fmt.Printf("Probe: %s, Agent: %s", time.Now().Local().String(), r.UserAgent()))
-
 	return
 }
 
