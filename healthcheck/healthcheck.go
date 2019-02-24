@@ -8,6 +8,7 @@ import (
 	"os"
 )
 
+// HealthCheck to run
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	health := Health{
 		Name: os.Getenv("SERVICE_NAME"),
