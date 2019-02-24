@@ -8,13 +8,13 @@ import (
 
 func TestCreateModel_CreateCarPark(t *testing.T) {
 	tests := []struct {
-		request   service.CreateModel
+		request   service.CarPark
 		expect    string
 		err       error
 		errString string
 	}{
 		{
-			request: service.CreateModel{
+			request: service.CarPark{
 				Spaces: 5,
 				Name:   "Tester",
 				PostCode: "bb12 6np",
@@ -23,7 +23,7 @@ func TestCreateModel_CreateCarPark(t *testing.T) {
 			err:    nil,
 		},
 		{
-			request: service.CreateModel{
+			request: service.CarPark{
 				Name: "Tester",
 				PostCode: "bb12 6np",
 			},
@@ -31,7 +31,7 @@ func TestCreateModel_CreateCarPark(t *testing.T) {
 			errString: "no spaces",
 		},
 		{
-			request: service.CreateModel{
+			request: service.CarPark{
 				Spaces: 1,
 				PostCode: "bb12 6np",
 			},

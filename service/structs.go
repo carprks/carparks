@@ -1,7 +1,7 @@
 package service
 
-// CreateModel standard to check the create against
-type CreateModel struct {
+// CarPark standard to check the create against
+type CarPark struct {
 	// Inputs
 	ID        int    `json:"id,omitempty"`
 	Name      string `json:"name,omitemprt"`
@@ -21,3 +21,4 @@ type Response struct {
 	Response string `json:"response"`
 	Error    string `json:"error"`
 }
+

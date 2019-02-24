@@ -11,7 +11,7 @@ import (
 func Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	createModel := CreateModel{}
+	createModel := CarPark{}
 	err := json.NewDecoder(r.Body).Decode(&createModel)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -42,7 +42,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 }
 
 // CreateCarPark creates the carpark for a company
-func (c CreateModel) CreateCarPark() (string, error) {
+func (c CarPark) CreateCarPark() (string, error) {
 	if c.Spaces == 0 {
 		return "failure", errors.New("no spaces")
 	}
