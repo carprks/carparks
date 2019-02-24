@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
 )
 
 // Handle standard
@@ -20,14 +19,14 @@ func Probe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// send status
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/health+json")
 	j, _ := json.Marshal(Healthy{
 		Status: "pass",
 	})
 	w.Write(j)
+	w.WriteHeader(http.StatusOK)
 
-	fmt.Println(fmt.Printf("Probe: %s, Agent: %s", time.Now().Local().String(), r.UserAgent()))
+	// fmt.Println(fmt.Printf("Probe: %s, Agent: %s", time.Now().Local().String(), r.UserAgent()))
 
 	return
 }
