@@ -1,5 +1,5 @@
 # Build box
-FROM golang:1.11.5 AS builder
+FROM golang:1.12 AS builder
 
 RUN mkdir -p /home/main
 WORKDIR /home/main
@@ -21,7 +21,8 @@ ARG AWS_ECR
 # Lint and Test
 COPY . .
 RUN golint -set_exit_status ./...
-RUN go test ./...
+RUN go test -short ./...
+RUN go test -race -short ./...
 
 # Build
 ARG build

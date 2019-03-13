@@ -1,8 +1,7 @@
 version: '3'
 services:
   carparks:
-    build:
-      context: ./
+    image: carprks/carparks:latest
     env_file:
       - .env
     ports:

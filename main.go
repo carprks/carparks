@@ -33,17 +33,17 @@ func _main(args []string) int {
 	// Router
 	router := mux.NewRouter().StrictSlash(true)
 
-	// Service
-	router.HandleFunc("/", service.Create).Methods("POST")
-	router.HandleFunc("/", service.RetrieveList).Methods("GET")
-	router.HandleFunc("/{carparkId}", service.Retrieve).Methods("GET")
-	router.HandleFunc("/{carparkId}", service.Patch).Methods("PATCH")
-
 	// Probe
 	router.HandleFunc("/probe", probe.Probe)
 
 	// Health Check
 	router.HandleFunc("/healthcheck", healthcheck.HealthCheck)
+
+	// Service
+	router.HandleFunc("/", service.Create).Methods("POST")
+	router.HandleFunc("/", service.RetrieveList).Methods("GET")
+	router.HandleFunc("/{carparkId}", service.Retrieve).Methods("GET")
+	router.HandleFunc("/{carparkId}", service.Patch).Methods("PATCH")
 
 	fmt.Println(fmt.Sprintf("Listening on: %s", port))
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), router); err != nil {
