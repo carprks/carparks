@@ -34,7 +34,7 @@ func _main(args []string) int {
 	router := mux.NewRouter().StrictSlash(true)
 
 	// Probe
-	router.HandleFunc("/probe", probe.Probe)
+	router.HandleFunc("/probe", probe.HTTP)
 
 	// Health Check
 	router.HandleFunc("/healthcheck", healthcheck.HealthCheck)
