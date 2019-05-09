@@ -2,8 +2,8 @@ package probe
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -11,7 +11,7 @@ import (
 func HTTP(w http.ResponseWriter, r *http.Request) {
 	buf, _ := ioutil.ReadAll(r.Body)
 	if len(buf) >= 1 {
-		log.Println("Probe Request", string(buf))
+		fmt.Println(fmt.Printf("Probe Request: %s", string(buf)))
 	}
 
 	// get probe response
