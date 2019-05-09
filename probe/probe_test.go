@@ -2,7 +2,7 @@ package probe_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"main/src/probe"
+	"main/probe"
 	"testing"
 )
 
