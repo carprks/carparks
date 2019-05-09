@@ -16,14 +16,13 @@ func Probe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// send status
-	w.Header().Set("Content-Type", "application/health+json")
 	j, _ := json.Marshal(Healthy{
 		Status: "pass",
 	})
-	w.Write(j)
+	w.Header().Set("Content-Type", "application/health+json")
+	w.Header().Set("Service", "CarParks")
 	w.WriteHeader(http.StatusOK)
-
-	fmt.Printf("Probed \n")
+	w.Write(j)
 
 	return
 }
