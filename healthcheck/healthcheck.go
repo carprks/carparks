@@ -11,8 +11,8 @@ import (
 // HealthCheck to run
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	health := Health{
-		Name: os.Getenv("SERVICE_NAME"),
-		URL: r.Host,
+		Name:   os.Getenv("SERVICE_NAME"),
+		URL:    r.Host,
 		Status: "pass",
 	}
 
@@ -35,8 +35,8 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
 		if dep.Ping {
 			h = Health{
-				Name: dep.Name,
-				URL: dep.URL,
+				Name:   dep.Name,
+				URL:    dep.URL,
 				Status: "fail",
 			}
 

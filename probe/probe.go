@@ -22,13 +22,16 @@ func HTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/health+json")
 	w.Header().Set("Service", "CarParks")
 	w.WriteHeader(http.StatusOK)
-	w.Write(j)
+	_, err := w.Write(j)
+	if err != nil {
+		fmt.Println(fmt.Printf("Write Error: %v", err))
+	}
 
 	return
 }
 
 // Probe responds with a healthy model
-func Probe() (Healthy, error){
+func Probe() (Healthy, error) {
 	return Healthy{
 		Status: "pass",
 	}, nil

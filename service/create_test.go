@@ -15,8 +15,8 @@ func TestCreateModel_CreateCarPark(t *testing.T) {
 	}{
 		{
 			request: service.CarPark{
-				Spaces: 5,
-				Name:   "Tester",
+				Spaces:   5,
+				Name:     "Tester",
 				PostCode: "bb12 6np",
 			},
 			expect: "success",
@@ -24,7 +24,7 @@ func TestCreateModel_CreateCarPark(t *testing.T) {
 		},
 		{
 			request: service.CarPark{
-				Name: "Tester",
+				Name:     "Tester",
 				PostCode: "bb12 6np",
 			},
 			expect:    "failure",
@@ -32,7 +32,7 @@ func TestCreateModel_CreateCarPark(t *testing.T) {
 		},
 		{
 			request: service.CarPark{
-				Spaces: 1,
+				Spaces:   1,
 				PostCode: "bb12 6np",
 			},
 			expect:    "failure",

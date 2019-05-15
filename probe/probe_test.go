@@ -7,9 +7,9 @@ import (
 )
 
 func TestProbe(t *testing.T) {
-	tests := []struct{
+	tests := []struct {
 		expect probe.Healthy
-		err error
+		err    error
 	}{
 		{
 			expect: probe.Healthy{
