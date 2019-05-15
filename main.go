@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"io/ioutil"
 	"main/healthcheck"
 	"main/probe"
 	"main/service"
@@ -19,11 +18,11 @@ func _main(args []string) int {
 			fmt.Println(fmt.Sprintf("Env Load: %v", err))
 			return 0
 		}
+	}
 
-		if len(os.Getenv("GOOGLE_API_KEY")) == 0 {
-			fmt.Println("Cant load google api key")
-			return 0
-		}
+	if len(os.Getenv("GOOGLE_API_KEY")) == 0 {
+		fmt.Println("Cant load google api key")
+		return 0
 	}
 
 	port := "80"
@@ -35,28 +34,16 @@ func _main(args []string) int {
 	router := mux.NewRouter()
 
 	// Probe
-	router.HandleFunc("/probe", probe.HTTP)
-	router.HandleFunc("/carparks/probe", probe.HTTP)
+	router.HandleFunc(fmt.Sprintf("%s/probe", os.Getenv("SITE_PREFIX")), probe.HTTP)
 
 	// Health Check
-	router.HandleFunc("/healthcheck", healthcheck.HealthCheck)
-	router.HandleFunc("/carparks/healthcheck", healthcheck.HealthCheck)
+	router.HandleFunc(fmt.Sprintf("%s/healthcheck", os.Getenv("SITE_PREFIX")), healthcheck.HealthCheck)
 
 	// Service
-	router.HandleFunc("/", service.Create).Methods("POST")
-	router.HandleFunc("/", service.RetrieveList).Methods("GET")
-	router.HandleFunc("/{carparkId:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}}", service.Retrieve).Methods("GET")
-	router.HandleFunc("/{carparkId:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}}", service.Patch).Methods("PATCH")
-
-	// General
-	router.HandleFunc("*", func(w http.ResponseWriter, r *http.Request) {
-		buf, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			fmt.Println(fmt.Printf("* Err: %v", err))
-		}
-
-		fmt.Println(fmt.Printf("Request: %v, %s", r.Body, string(buf)))
-	})
+	router.HandleFunc(fmt.Sprintf("%s/", os.Getenv("SITE_PREFIX")), service.Create).Methods("POST")
+	router.HandleFunc(fmt.Sprintf("%s/", os.Getenv("SITE_PREFIX")), service.RetrieveList).Methods("GET")
+	router.HandleFunc(fmt.Sprintf("%s/{carparkId:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}}", os.Getenv("SITE_PREFIX")), service.Retrieve).Methods("GET")
+	router.HandleFunc(fmt.Sprintf("%s/{carparkId:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}}", os.Getenv("SITE_PREFIX")), service.Patch).Methods("PATCH")
 
 	fmt.Println(fmt.Sprintf("Listening on: %s", port))
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), router); err != nil {
