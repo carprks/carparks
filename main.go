@@ -34,6 +34,7 @@ func _main(args []string) int {
 	router := mux.NewRouter()
 
 	// Probe
+	router.HandleFunc("/probe", probe.HTTP) // needed to keep healthy
 	router.HandleFunc(fmt.Sprintf("%s/probe", os.Getenv("SITE_PREFIX")), probe.HTTP)
 
 	// Health Check
