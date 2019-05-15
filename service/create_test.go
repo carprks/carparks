@@ -1,8 +1,8 @@
 package service_test
 
 import (
+	"github.com/carprks/carparks/service"
 	"github.com/stretchr/testify/assert"
-	"main/service"
 	"testing"
 )
 

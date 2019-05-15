@@ -1,8 +1,8 @@
 package probe_test
 
 import (
+	"github.com/carprks/carparks/probe"
 	"github.com/stretchr/testify/assert"
-	"main/probe"
 	"testing"
 )
 
