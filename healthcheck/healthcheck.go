@@ -6,71 +6,147 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 )
 
-// HealthCheck to run
-func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	health := Health{
-		Name:   os.Getenv("SERVICE_NAME"),
-		URL:    r.Host,
-		Status: "pass",
+// HTTP the request as done by routing
+func HTTP(w http.ResponseWriter, r *http.Request) {
+	hc := HealthCheck{
+		Name:         os.Getenv("SERVICE_NAME"),
+		URL:          r.Host,
+		Dependencies: os.Getenv("SERVICE_DEPENDENCIES"),
 	}
 
-	// Dependencies
-	depsString := os.Getenv("SERVICE_DEPENDENCIES")
-	deps := Dependencies{}
-	err := json.Unmarshal([]byte(depsString), &deps)
+	health, err := hc.Check()
 	if err != nil {
 		w.Header().Set("Content-Type", "application/health+json")
-		health.Status = "fail"
-		j, _ := json.Marshal(health)
-		w.Write(j)
+		j, _ := json.Marshal(Health{
+			Status: HealthFail,
+		})
 		w.WriteHeader(http.StatusOK)
-
+		_, err := w.Write(j)
+		if err != nil {
+			fmt.Println(fmt.Errorf("write fail: %v", err))
+		}
 		return
 	}
 
-	for _, dep := range deps.Dependencies {
-		h := Health{}
+	j, _ := json.Marshal(health)
+	w.Header().Set("Content-Type", "application/health+json")
+	w.Header().Set("Strict-Transport-Security", "max-age=1000; includeSubDomains; preload")
+	w.Header().Set("Content-Security-Policy", "upgrade-insecure-requests")
+	w.Header().Set("Feature-Policy", "vibrate 'none'; geolocation 'none'")
+	w.WriteHeader(http.StatusOK)
+	_, fErr := w.Write(j)
+	if fErr != nil {
+		fmt.Println(fmt.Errorf("write fail: %v", err))
+	}
+}
 
-		if dep.Ping {
-			h = Health{
-				Name:   dep.Name,
-				URL:    dep.URL,
-				Status: "fail",
-			}
-
-			d, _ := http.Get(dep.URL)
-			if d.StatusCode != 500 {
-				h.Status = "pass"
-			}
-		} else {
-			durl := fmt.Sprintf("https://%s/healthcheck", dep.URL)
-			d, err := http.Get(durl)
-			if err != nil {
-				h = Health{
-					URL:    durl,
-					Status: "fail",
-				}
-			}
-
-			b, err := ioutil.ReadAll(d.Body)
-			if err != nil {
-				h = Health{
-					URL:    durl,
-					Status: "fail",
-				}
-			}
-			json.Unmarshal(b, &h)
-		}
-
-		health.Dependencies = append(health.Dependencies, h)
+// Check do the health check itself
+func (h HealthCheck) Check() (Health, error) {
+	health := Health{
+		Name:         h.Name,
+		URL:          h.URL,
+		Status:       HealthFail,
+		Dependencies: nil,
 	}
 
-	w.Header().Set("Content-Type", "application/health+json")
-	j, _ := json.Marshal(health)
-	w.Write(j)
-	w.WriteHeader(http.StatusOK)
+	health.Status = HealthPass
+	if h.Dependencies != "" {
+		deps, err := h.getDependencies()
+		if err != nil {
+			return health, err
+		}
 
-	return
+		checkedDeps := []Health{}
+		for _, dep := range deps.Dependencies {
+			d, err := dep.check()
+			if err != nil {
+				return health, err
+			}
+			checkedDeps = append(checkedDeps, d)
+		}
+
+		health.Dependencies = checkedDeps
+	}
+
+	// now set to failed if a dependency failed
+	for _, dep := range health.Dependencies {
+		if dep.Status == HealthFail {
+			health.Status = HealthFail
+		}
+	}
+
+	return health, nil
+}
+
+// getDependencies get the list of dependencies
+func (h HealthCheck) getDependencies() (Dependencies, error) {
+	deps := Dependencies{}
+	err := json.Unmarshal([]byte(h.Dependencies), &deps)
+	if err != nil {
+		return deps, err
+	}
+
+	return deps, nil
+}
+
+// check the dependency status
+func (d Dependency) check() (Health, error) {
+	if strings.Contains(d.URL, "$") {
+		d.URL = os.Getenv(d.URL[1:])
+	}
+
+	// Ping check
+	if d.Ping {
+		return d.ping()
+	}
+
+	// Standard check
+	return d.curl()
+}
+
+// ping checks
+func (d Dependency) ping() (Health, error) {
+	h := Health{
+		Name:   d.Name,
+		URL:    d.URL,
+		Status: HealthFail,
+	}
+
+	p, err := http.Get(h.URL)
+	if err != nil {
+		return h, err
+	}
+	if p.StatusCode == http.StatusOK {
+		h.Status = HealthPass
+	}
+	return h, nil
+}
+
+// curl checks
+func (d Dependency) curl() (Health, error) {
+	h := Health{}
+	p, err := http.Get(d.URL)
+	if err != nil {
+		h = Health{
+			URL:    d.URL,
+			Status: HealthFail,
+		}
+		return h, err
+	}
+	b, err := ioutil.ReadAll(p.Body)
+	if err != nil {
+		h = Health{
+			URL:    d.URL,
+			Status: HealthFail,
+		}
+		return h, err
+	}
+	jErr := json.Unmarshal(b, &h)
+	if jErr != nil {
+		return h, jErr
+	}
+	return h, nil
 }
