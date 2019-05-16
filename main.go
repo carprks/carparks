@@ -40,10 +40,9 @@ func _main(args []string) int {
 
 	// Probe
 	router.Get("/probe", probe.HTTP)
-	router.Get(fmt.Sprintf("%s/probe", os.Getenv("SITE_PREFIX")), probe.HTTP)
 
 	// HealthCheck
-	router.Get(fmt.Sprintf("%s/healthcheck", os.Getenv("SITE_PREFIX")), healthcheck.HTTP)
+	router.Get("/healthcheck", healthcheck.HTTP)
 
 	// Wildcard
 	router.Get("/*", func(w http.ResponseWriter, r *http.Request) {
